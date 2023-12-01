@@ -70,4 +70,49 @@ struct test_struct_t {
 ```
 
 ## Visual
-![image](struct_memory_layout_visualization.png)
+![struct_memory_layout_visualization.png](struct_memory_layout_visualization.png)
+
+## #pragma pack(push, 1)
+This pragma packs the struct to 1-byte boundaries
+This could cause more complex assembly instructions / more overhead on some machines.
+
+- `pack-64-bit`
+    - `g++ -g test-pack.cpp -o test-pack-64.o`
+- `pack-32-bit`
+    - `g++ -g test-pack.cpp -m32 -o test-pack-32.o`
+
+## pahole with pack
+- `make print-pack-struct-64`
+    - `pahole -C test_struct_t test-pack-64.o`
+```die__process_class: tag not supported 0x2f (template_type_parameter)!
+struct test_struct_t {
+        uint32_t                   a;                    /*     0     4 */
+        uint8_t                    b;                    /*     4     1 */
+        uint16_t                   c;                    /*     5     2 */
+        uint32_t                   d;                    /*     7     4 */
+        uint8_t                    arr[6];               /*    11     6 */
+        volatile uint64_t          f;                    /*    17     8 */
+
+        /* size: 25, cachelines: 1, members: 6 */
+        /* last cacheline: 25 bytes */
+} __attribute__((__packed__));
+```
+- `make print-pack-struct-32`
+    - `pahole -C test_struct_t test-pack-32.o`
+```
+die__process_class: tag not supported 0x2f (template_type_parameter)!
+struct test_struct_t {
+        uint32_t                   a;                    /*     0     4 */
+        uint8_t                    b;                    /*     4     1 */
+        uint16_t                   c;                    /*     5     2 */
+        uint32_t                   d;                    /*     7     4 */
+        uint8_t                    arr[6];               /*    11     6 */
+        volatile uint64_t          f;                    /*    17     8 */
+
+        /* size: 25, cachelines: 1, members: 6 */
+        /* last cacheline: 25 bytes */
+} __attribute__((__packed__));
+```
+
+## Visualization of packed structs
+![packed_struct_memory_layout_visualization.png](packed_struct_memory_layout_visualization.png)
