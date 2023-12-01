@@ -70,4 +70,4 @@ struct test_struct_t {
 ```
 
 ## Visual
-![image](struct_layout_visualization.png)
+![image](struct_memory_layout_visualization.png)
